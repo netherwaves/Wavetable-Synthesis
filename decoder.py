@@ -347,7 +347,7 @@ def export_samples(bags, global_bag, num_samples, file_dir, file_title="samples"
 
 
         # Write sample metadata (see gen_sample_meta_data_string for deets)
-        cpp_file.write("const sample_data {0}_samples[{1}] = {{\n".format(instrument_name, num_samples))
+        cpp_file.write("static const AudioSynthWavetable::sample_data {0}_samples[{1}] = {{\n".format(instrument_name, num_samples))
         for i in range(len(bags)):
             out_str = gen_sample_meta_data_string(bags[i], global_bag if global_bag else bags[i], i, instrument_name, keyRanges[i])
             cpp_file.write(out_str)
