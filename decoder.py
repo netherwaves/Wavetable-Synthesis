@@ -294,7 +294,14 @@ def export_samples(bags, global_bag, num_samples, file_dir, file_title="samples"
     with open(file_dir + "/" + cpp_file_name, "w") as cpp_file, open(file_dir + "/" + h_file_name, "w") as h_file:
         # Decode data to sample_data array in header file
         h_file.write("#pragma once\n#include <Audio.h>\n\n")
-        h_file.write("extern const AudioWavetableSynth::instrument_data {0};\n".format(instrument_name, num_samples))
+        h_file.write("extern const AudioWavetableSynth::instrument_data {0};\n".format(instrument_name))
+
+        cpp_file.write("#include \"{}\"\n".format(h_file_name))
+
+
+        #Sort bags by key range and expand ranges to fill all key values
+        keyRanges = []
+        getKeyRanges(bags, keyRanges)
 
 
         # For each sample print out sample array to .cpp file and init to .h file
@@ -314,7 +321,7 @@ def export_samples(bags, global_bag, num_samples, file_dir, file_title="samples"
             # h_file.write("\nextern const uint32_t {0};\n".format(smpl_identifier))
 
             # Write array contents to .cpp
-            cpp_file.write("PROGMEM\n");
+            cpp_file.write("\nPROGMEM");
             cpp_file.write("\nstatic const uint32_t {0} = {{\n".format(smpl_identifier))
 
             # Output 32-bit hex literals
@@ -340,18 +347,13 @@ def export_samples(bags, global_bag, num_samples, file_dir, file_title="samples"
 
 
         # Write sample metadata (see gen_sample_meta_data_string for deets)
-        cpp_file.write("#include \"{}\"\n".format(h_file_name))
         cpp_file.write("const sample_data {0}_samples[{1}] = {{\n".format(instrument_name, num_samples))
         for i in range(len(bags)):
             out_str = gen_sample_meta_data_string(bags[i], global_bag if global_bag else bags[i], i, instrument_name, keyRanges[i])
             cpp_file.write(out_str)
         cpp_file.write("};\n")
 
-
-        #Sort bags by key range and expand ranges to fill all key values
-        keyRanges = []
-        getKeyRanges(bags, keyRanges)
-
+        # set ranges
         cpp_file.write("static const uint8_t {0}_ranges[] = {{".format(instrument_name))
         for keyRange in keyRanges:
             cpp_file.write("{0}, ".format(keyRange[1]))
