@@ -101,10 +101,10 @@ class MyView(Frame):
         self.box_1.grid(column=0, row=0, padx=self.box_pad, pady=self.box_pad, sticky=N + S + E + W)
         self.version_frame = pjrc.JJFrame(self.box_1, 2, 1, 1, 1)
         self.version_frame.grid(row=1, padx=def_pad, sticky=N + E + W)
-        self.ver_32 = Radiobutton(self.version_frame, text='Teensy 3.2 (default)',
+        self.ver_32 = Radiobutton(self.version_frame, text='Teensy 4.0 (default)',
                 variable=self.version, command=lambda: self.teensyButtonSelect(1), value=1)
         self.ver_32.grid(row=0, column=0, sticky=N + S + E + W, padx=def_pad)
-        self.ver_36 = Radiobutton(self.version_frame, text='Teensy 3.6',
+        self.ver_36 = Radiobutton(self.version_frame, text='Teensy 3.6 (deprecated)',
                 variable=self.version, command=lambda: self.teensyButtonSelect(2), value=2)
         self.ver_36.grid(row=1, column=0, sticky=N + S + E + W, padx=def_pad)
 
