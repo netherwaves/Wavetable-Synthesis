@@ -294,7 +294,7 @@ def export_samples(bags, global_bag, num_samples, file_dir, file_title="samples"
     with open(file_dir + "/" + cpp_file_name, "w") as cpp_file, open(file_dir + "/" + h_file_name, "w") as h_file:
         # Decode data to sample_data array in header file
         h_file.write("#pragma once\n#include <Audio.h>\n\n")
-        h_file.write("extern const AudioWavetableSynth::instrument_data {0};\n".format(instrument_name))
+        h_file.write("extern const AudioSynthWavetable::instrument_data {0};\n".format(instrument_name))
 
         cpp_file.write("#include \"{}\"\n".format(h_file_name))
 
@@ -358,7 +358,7 @@ def export_samples(bags, global_bag, num_samples, file_dir, file_title="samples"
         for keyRange in keyRanges:
             cpp_file.write("{0}, ".format(keyRange[1]))
         cpp_file.write("};\n\n")
-        cpp_file.write("const AudioWavetableSynth::instrument_data {0} = {{{1}, {0}_ranges, {0}_samples }};\n\n".format(instrument_name, num_samples))
+        cpp_file.write("const AudioSynthWavetable::instrument_data {0} = {{{1}, {0}_ranges, {0}_samples }};\n\n".format(instrument_name, num_samples))
 
 ## Prints out the sample metadata
 # @param bag the bag of the current sample being dedoded
@@ -377,18 +377,18 @@ def gen_sample_meta_data_string(bag, global_bag, sample_num, instrument_name, ke
         "\t\t((uint32_t){LOOP_END} - 1) << (32 - {LENGTH_BITS}), // LOOP_PHASE_END\n" \
         "\t\t(((uint32_t){LOOP_END} - 1) << (32 - {LENGTH_BITS})) - (((uint32_t){LOOP_START} - 1) << (32 - {LENGTH_BITS})), // LOOP_PHASE_LENGTH\n" \
         "\t\tuint16_t(UINT16_MAX * DECIBEL_SHIFT({INIT_ATTENUATION})), // INITIAL_ATTENUATION_SCALAR\n" \
-        "\t\tuint32_t({DELAY_ENV:.2f} * AudioWavetableSynth::SAMPLES_PER_MSEC / AudioWavetableSynth::ENVELOPE_PERIOD + 0.5), // DELAY_COUNT\n" \
-        "\t\tuint32_t({ATTACK_ENV:.2f} * AudioWavetableSynth::SAMPLES_PER_MSEC / AudioWavetableSynth::ENVELOPE_PERIOD + 0.5), // ATTACK_COUNT\n" \
-        "\t\tuint32_t({HOLD_ENV:.2f} * AudioWavetableSynth::SAMPLES_PER_MSEC / AudioWavetableSynth::ENVELOPE_PERIOD + 0.5), // HOLD_COUNT\n" \
-        "\t\tuint32_t({DECAY_ENV:.2f} * AudioWavetableSynth::SAMPLES_PER_MSEC / AudioWavetableSynth::ENVELOPE_PERIOD + 0.5), // DECAY_COUNT\n" \
-        "\t\tuint32_t({RELEASE_ENV:.2f} * AudioWavetableSynth::SAMPLES_PER_MSEC / AudioWavetableSynth::ENVELOPE_PERIOD + 0.5), // RELEASE_COUNT\n" \
-        "\t\tint32_t((1.0 - DECIBEL_SHIFT({SUSTAIN_FRAC:.1f})) * AudioWavetableSynth::UNITY_GAIN), // SUSTAIN_MULT\n" \
-        "\t\tuint32_t({VIB_DELAY_ENV:.2f} * AudioWavetableSynth::SAMPLES_PER_MSEC / (2 * AudioWavetableSynth::LFO_PERIOD)), // VIBRATO_DELAY\n" \
-        "\t\tuint32_t({VIB_INC_ENV:.1f} * AudioWavetableSynth::LFO_PERIOD * (UINT32_MAX / AUDIO_SAMPLE_RATE_EXACT)), // VIBRATO_INCREMENT\n" \
+        "\t\tuint32_t({DELAY_ENV:.2f} * AudioSynthWavetable::SAMPLES_PER_MSEC / AudioSynthWavetable::ENVELOPE_PERIOD + 0.5), // DELAY_COUNT\n" \
+        "\t\tuint32_t({ATTACK_ENV:.2f} * AudioSynthWavetable::SAMPLES_PER_MSEC / AudioSynthWavetable::ENVELOPE_PERIOD + 0.5), // ATTACK_COUNT\n" \
+        "\t\tuint32_t({HOLD_ENV:.2f} * AudioSynthWavetable::SAMPLES_PER_MSEC / AudioSynthWavetable::ENVELOPE_PERIOD + 0.5), // HOLD_COUNT\n" \
+        "\t\tuint32_t({DECAY_ENV:.2f} * AudioSynthWavetable::SAMPLES_PER_MSEC / AudioSynthWavetable::ENVELOPE_PERIOD + 0.5), // DECAY_COUNT\n" \
+        "\t\tuint32_t({RELEASE_ENV:.2f} * AudioSynthWavetable::SAMPLES_PER_MSEC / AudioSynthWavetable::ENVELOPE_PERIOD + 0.5), // RELEASE_COUNT\n" \
+        "\t\tint32_t((1.0 - DECIBEL_SHIFT({SUSTAIN_FRAC:.1f})) * AudioSynthWavetable::UNITY_GAIN), // SUSTAIN_MULT\n" \
+        "\t\tuint32_t({VIB_DELAY_ENV:.2f} * AudioSynthWavetable::SAMPLES_PER_MSEC / (2 * AudioSynthWavetable::LFO_PERIOD)), // VIBRATO_DELAY\n" \
+        "\t\tuint32_t({VIB_INC_ENV:.1f} * AudioSynthWavetable::LFO_PERIOD * (UINT32_MAX / AUDIO_SAMPLE_RATE_EXACT)), // VIBRATO_INCREMENT\n" \
         "\t\t(CENTS_SHIFT({VIB_PITCH_INIT}) - 1.0) * 4, // VIBRATO_PITCH_COEFFICIENT_INITIAL\n" \
         "\t\t(1.0 - CENTS_SHIFT({VIB_PITCH_SCND})) * 4, // VIBRATO_COEFFICIENT_SECONDARY\n" \
-        "\t\tuint32_t({MOD_DELAY_ENV:.2f} * AudioWavetableSynth::SAMPLES_PER_MSEC / (2 * AudioWavetableSynth::LFO_PERIOD)), // MODULATION_DELAY\n" \
-        "\t\tuint32_t({MOD_INC_ENV:.1f} * AudioWavetableSynth::LFO_PERIOD * (UINT32_MAX / AUDIO_SAMPLE_RATE_EXACT)), // MODULATION_INCREMENT\n" \
+        "\t\tuint32_t({MOD_DELAY_ENV:.2f} * AudioSynthWavetable::SAMPLES_PER_MSEC / (2 * AudioSynthWavetable::LFO_PERIOD)), // MODULATION_DELAY\n" \
+        "\t\tuint32_t({MOD_INC_ENV:.1f} * AudioSynthWavetable::LFO_PERIOD * (UINT32_MAX / AUDIO_SAMPLE_RATE_EXACT)), // MODULATION_INCREMENT\n" \
         "\t\t(CENTS_SHIFT({MOD_PITCH_INIT}) - 1.0) * 4, // MODULATION_PITCH_COEFFICIENT_INITIAL\n" \
         "\t\t(1.0 - CENTS_SHIFT({MOD_PITCH_SCND})) * 4, // MODULATION_PITCH_COEFFICIENT_SECOND\n" \
         "\t\tint32_t(UINT16_MAX * (DECIBEL_SHIFT({MOD_AMP_INIT_GAIN}) - 1.0)) * 4, // MODULATION_AMPLITUDE_INITIAL_GAIN\n" \
